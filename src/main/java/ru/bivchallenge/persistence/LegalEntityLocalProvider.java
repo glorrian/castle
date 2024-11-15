@@ -31,6 +31,9 @@ public class LegalEntityLocalProvider extends AbstractLocalDataProvider<LegalEnt
     }
 
     private LegalEntity parseLegalEntity(CsvRecord csvRecord) {
+        if (csvRecord.getFieldCount() < 5) {
+            return null;
+        }
         return new LegalEntity(
                 Long.parseLong(csvRecord.getField(0)),
                 Long.parseLong(csvRecord.getField(1)),

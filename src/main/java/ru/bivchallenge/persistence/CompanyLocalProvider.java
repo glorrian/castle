@@ -25,16 +25,28 @@ public class CompanyLocalProvider extends AbstractLocalDataProvider<Company> {
         if (companyMap != null) {
             return companyMap;
         }
-        companyMap = getDataFromCsvTable(companiesTablePath, this::parseCompany);
+        companyMap = getDataFromCsvTable(companiesTablePath, this::parseCompany, this::repairCompany);
         return companyMap;
     }
 
-    private Company parseCompany(CsvRecord record) {
+    private Company parseCompany(CsvRecord csvRecord) {
+        if (csvRecord.getFieldCount() < 4) {
+           return null;
+        }
         return new Company(
-                Long.parseLong(record.getField(0)),
-                record.getField(1),
-                record.getField(2),
-                record.getField(3)
+                Long.parseLong(csvRecord.getField(0)),
+                csvRecord.getField(1),
+                csvRecord.getField(2),
+                csvRecord.getField(3)
+        );
+    }
+
+    private Company repairCompany(String lastPart, Company company) {
+        return new Company(
+                company.id(),
+                company.ogrn(),
+                company.inn(),
+                company.fullName() + lastPart
         );
     }
 }

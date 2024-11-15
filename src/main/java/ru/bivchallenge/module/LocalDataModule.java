@@ -26,7 +26,7 @@ public abstract class LocalDataModule {
                 .fieldSeparator('\t')
                 .skipEmptyLines(true)
                 .ignoreDifferentFieldCount(true)
-                .acceptCharsAfterQuotes(false);
+                .detectBomHeader(true);
     }
 
     @Provides
