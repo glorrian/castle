@@ -20,7 +20,7 @@ jobs:
         uses: graalvm/setup-graalvm@v1.2.5
         with:
             distribution: 'graalvm'
-            java-version: ${{ matrix.java }}
+            java-version: 21
             github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Validate Gradle wrapper
