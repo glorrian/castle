@@ -27,12 +27,19 @@ public class ProcessDataExecutor implements Executor {
     @Override
     public void execute() throws ExecutionException, InterruptedException {
         try (ExecutorService executorService = Executors.newFixedThreadPool(3)) {
-            Future<Map<Long, Company>> companyDataFuture = executorService.submit(companyDataProvider::get);
+            long _start = System.currentTimeMillis();
+            Future<Map<Long, Company>> companyDataFuture = executorService.submit(() -> companyDataProvider.get());
+
             Future<Map<Long, LegalEntity>> legalEntityDataFuture = executorService.submit(legalEntityDataProvider::get);
+
             Future<Map<Long, NaturalEntity>> naturalEntityDataFuture = executorService.submit(naturalEntityDataProvider::get);
 
             Map<Long, Company> companyMap = companyDataFuture.get();
+            Map<Long, LegalEntity> legalEntityMap = legalEntityDataFuture.get();
 
+            Map<Long, NaturalEntity> naturalEntityMap = naturalEntityDataFuture.get();
+            System.out.println("All data loaded in " + (System.currentTimeMillis() - _start) + " ms");
+            System.out.println("Company data size: " + naturalEntityMap.size());
         }
     }
 }
