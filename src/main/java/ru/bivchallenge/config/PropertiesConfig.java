@@ -1,5 +1,7 @@
 package ru.bivchallenge.config;
 
+import jakarta.inject.Inject;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
@@ -9,6 +11,7 @@ public class PropertiesConfig implements CastleConfig {
 
     private final Properties properties;
 
+    @Inject
     public PropertiesConfig() {
         properties = new Properties();
         InputStream input = PropertiesConfig.class.getClassLoader().getResourceAsStream("application.properties");

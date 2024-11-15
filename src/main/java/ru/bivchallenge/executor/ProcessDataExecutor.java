@@ -1,11 +1,9 @@
 package ru.bivchallenge.executor;
 
-import dagger.Component;
 import jakarta.inject.Inject;
 import ru.bivchallenge.dto.Company;
 import ru.bivchallenge.dto.LegalEntity;
 import ru.bivchallenge.dto.NaturalEntity;
-import ru.bivchallenge.module.LocalDataModule;
 import ru.bivchallenge.persistence.DataProvider;
 
 import java.util.Map;
@@ -14,7 +12,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-@Component(modules = LocalDataModule.class)
 public class ProcessDataExecutor implements Executor {
     private final DataProvider<LegalEntity> legalEntityDataProvider;
     private final DataProvider<NaturalEntity> naturalEntityDataProvider;
