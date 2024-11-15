@@ -11,7 +11,7 @@ import java.util.Objects;
  * @param inn      the INN (Taxpayer Identification Number) of the company
  * @param fullName the full name of the company
  */
-public record Company(long id, String ogrn, String inn, String fullName) implements Entity {
+public record Company(long id, String ogrn, String inn, String fullName) implements Entity, RecordSeparable {
 
     @Override
     public boolean equals(Object o) {
@@ -23,5 +23,10 @@ public record Company(long id, String ogrn, String inn, String fullName) impleme
     @Override
     public int hashCode() {
         return Objects.hashCode(id());
+    }
+
+    @Override
+    public String[] separate() {
+        return new String[]{String.valueOf(id), ogrn, inn, fullName};
     }
 }

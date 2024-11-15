@@ -3,13 +3,7 @@ package ru.bivchallenge.dto;
 import java.util.Objects;
 import java.util.Set;
 
-public record BenefeciarSet(Company company, Set<NaturalEntity> naturalEntitySet) implements Entity {
-
-    @Override
-    public long id() {
-        return company.id();
-    }
-
+public record BenefeciarSet(Company company, Set<Benefeciar> naturalEntitySet) {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
