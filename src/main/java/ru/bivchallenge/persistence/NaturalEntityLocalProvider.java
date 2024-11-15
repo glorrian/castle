@@ -30,6 +30,9 @@ public class NaturalEntityLocalProvider extends AbstractLocalDataProvider<Natura
     }
 
     private NaturalEntity parseLegalEntity(CsvRecord csvRecord) {
+        if (csvRecord.getFieldCount() < 6) {
+            return null;
+        }
         return new NaturalEntity(
                 Long.parseLong(csvRecord.getField(0)),
                 Long.parseLong(csvRecord.getField(1)),
