@@ -28,8 +28,14 @@ jobs:
 
       - name: Build with Gradle
         run: ./gradlew build --no-daemon --continue
+
+      - name: Build native GraalVM with Gradle
+        run: ./gradlew nativeCompile --no-daemon --continue
+
       - uses: actions/upload-artifact@v3.1.0
         with:
           name: Build Artifacts
           path: |
             **/build/reports
+            
+        
