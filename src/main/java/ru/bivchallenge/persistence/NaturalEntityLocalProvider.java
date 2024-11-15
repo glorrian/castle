@@ -12,7 +12,6 @@ import ru.bivchallenge.module.LocalDataModule;
 import java.nio.file.Path;
 import java.util.Map;
 
-@Singleton
 @Component(modules = LocalDataModule.class)
 public class NaturalEntityLocalProvider extends AbstractLocalDataProvider<NaturalEntity> {
     private final Path legalEntityTablePath;
