@@ -1,4 +1,4 @@
-package ru.bivchallenge.provider;
+package ru.bivchallenge.persistence;
 
 import java.util.Map;
 import ru.bivchallenge.dto.Entity;
