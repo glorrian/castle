@@ -37,7 +37,7 @@ graalvmNative.toolchainDetection = false
 graalvmNative {
     binaries {
         main {
-            imageName.set('mn-graalvm-application')
+            imageName.set('castle-application')
             buildArgs.add('--verbose')
         }
     }
