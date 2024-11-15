@@ -12,8 +12,11 @@ repositories {
 }
 
 dependencies {
-
+    implementation 'de.siegmar:fastcsv:3.4.0'
+    implementation 'org.jgrapht:jgrapht-core:1.5.2'
+    implementation 'com.google.dagger:dagger:2.52'
 }
+
 application {
     mainClass = 'ru.bivchallenge.CastleApplication'
 }
