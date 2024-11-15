@@ -12,7 +12,6 @@ import ru.bivchallenge.module.LocalDataModule;
 import java.nio.file.Path;
 import java.util.Set;
 
-@Singleton
 @Component(modules = LocalDataModule.class)
 public class BenefeciarLocalDataDispatcher implements DataDispatcher<BenefeciarSet> {
     private final Path benefeciariesTablePath;
