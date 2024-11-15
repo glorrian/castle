@@ -1,4 +1,4 @@
-package ru.bivchallenge.provider;
+package ru.bivchallenge.persistence;
 
 import dagger.Component;
 import de.siegmar.fastcsv.reader.CsvReader;
