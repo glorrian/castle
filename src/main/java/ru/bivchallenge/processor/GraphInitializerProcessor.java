@@ -1,19 +1,18 @@
 package ru.bivchallenge.processor;
-import org.jgrapht.Graph;
-import org.jgrapht.graph.DefaultWeightedEdge;
-import org.jgrapht.graph.Multigraph;
 import ru.bivchallenge.dto.Company;
+import ru.bivchallenge.dto.CompanyGraph;
 
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
-public class GraphInitializerProcessor implements MapProcessor<Company, Graph<String, DefaultWeightedEdge>>{
-    private Multigraph<String, DefaultWeightedEdge> multiGraph;
-
-
+public class GraphInitializerProcessor implements MapProcessor<Company, CompanyGraph>{
     @Override
-    public Map<Long, Graph<String, DefaultWeightedEdge>> apply(Map<Long, Company> longCompanyMap) {
-        return Map.of();
+    public Map<Long, CompanyGraph> apply(Map<Long, Company> companyMap) {
+        return companyMap.entrySet().stream().map(entry -> {
+            CompanyGraph companyGraph = new CompanyGraph(entry.getValue(), null);
+            return Map.entry(entry.getKey(), companyGraph);
+        }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 }
 
