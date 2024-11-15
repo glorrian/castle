@@ -1,9 +1,9 @@
 package ru.bivchallenge.dto;
 
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
-public record BenefeciarList(Company company, List<NaturalEntity> naturalEntityList) implements Entity {
+public record BenefeciarList(Company company, Set<NaturalEntity> naturalEntitySet) implements Entity {
 
     @Override
     public long id() {
@@ -14,11 +14,11 @@ public record BenefeciarList(Company company, List<NaturalEntity> naturalEntityL
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof BenefeciarList that)) return false;
-        return Objects.equals(company(), that.company()) && Objects.equals(naturalEntityList(), that.naturalEntityList());
+        return Objects.equals(company(), that.company()) && Objects.equals(naturalEntitySet(), that.naturalEntitySet());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(company(), naturalEntityList());
+        return Objects.hash(company(), naturalEntitySet());
     }
 }
