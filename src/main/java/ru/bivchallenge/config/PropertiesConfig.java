@@ -29,7 +29,7 @@ public class PropertiesConfig implements CastleConfig {
     public TableConfig getTableConfig() {
         return new TableConfig() {
             @Override
-            public Path getCompaniesTablePath() {
+            public Path getCompanyTablePath() {
                 return Path.of(properties.getProperty("table.companies"));
             }
 
@@ -41,6 +41,11 @@ public class PropertiesConfig implements CastleConfig {
             @Override
             public Path getFounderNaturalTablePath() {
                 return Path.of(properties.getProperty("table.founder-natural"));
+            }
+
+            @Override
+            public Path getBeneficiariesTablePath() {
+                return Path.of(properties.getProperty("table.beneficiaries"));
             }
         };
     }

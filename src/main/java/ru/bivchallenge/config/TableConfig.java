@@ -13,7 +13,7 @@ public interface TableConfig {
      *
      * @return a {@link Path} to the companies table file
      */
-    Path getCompaniesTablePath();
+    Path getCompanyTablePath();
 
     /**
      * Retrieves the file path for the legal founders table.
@@ -28,4 +28,11 @@ public interface TableConfig {
      * @return a {@link Path} to the natural founders table file
      */
     Path getFounderNaturalTablePath();
+
+    /**
+     * Retrieves the file path for the beneficiaries table.
+     *
+     * @return a {@link Path} to the beneficiaries table file
+     */
+    Path getBeneficiariesTablePath();
 }

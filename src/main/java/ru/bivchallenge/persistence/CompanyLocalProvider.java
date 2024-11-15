@@ -20,7 +20,7 @@ public class CompanyLocalProvider extends AbstractLocalDataProvider<Company> {
     @Inject
     public CompanyLocalProvider(CastleConfig castleConfig, CsvReader.CsvReaderBuilder csvReaderBuilder) {
         super(csvReaderBuilder);
-        this.companiesTablePath = castleConfig.getTableConfig().getCompaniesTablePath();
+        this.companiesTablePath = castleConfig.getTableConfig().getCompanyTablePath();
     }
 
     @Override
