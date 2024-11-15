@@ -30,7 +30,7 @@ jobs:
         run: ./gradlew build --no-daemon --continue
 
       - name: Build native GraalVM with Gradle
-        run: ./gradlew nativeCompile --no-daemon --continue
+        run: ./gradlew nativeBuild --no-daemon --continue
 
       - uses: actions/upload-artifact@v3.1.0
         with:
