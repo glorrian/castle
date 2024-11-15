@@ -4,7 +4,6 @@ import dagger.Component;
 import de.siegmar.fastcsv.reader.CsvReader;
 import de.siegmar.fastcsv.reader.CsvRecord;
 import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
 import ru.bivchallenge.config.CastleConfig;
 import ru.bivchallenge.dto.NaturalEntity;
 import ru.bivchallenge.module.LocalDataModule;
