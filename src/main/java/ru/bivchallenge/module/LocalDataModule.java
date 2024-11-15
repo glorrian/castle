@@ -21,7 +21,7 @@ public abstract class LocalDataModule {
 
     @Provides
     @Singleton
-    public CsvReader.CsvReaderBuilder provideCsvReaderBuilder() {
+    static CsvReader.CsvReaderBuilder provideCsvReaderBuilder() {
         return CsvReader.builder()
                 .fieldSeparator('\t')
                 .skipEmptyLines(true)
@@ -31,7 +31,7 @@ public abstract class LocalDataModule {
 
     @Provides
     @Singleton
-    public CsvWriter.CsvWriterBuilder provideCsvWriterBuilder() {
+    static CsvWriter.CsvWriterBuilder provideCsvWriterBuilder() {
         return CsvWriter.builder()
                 .bufferSize(64 * 1024)
                 .fieldSeparator('\t')

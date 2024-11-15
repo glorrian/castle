@@ -1,18 +1,14 @@
 package ru.bivchallenge.persistence;
 
-import dagger.Component;
 import de.siegmar.fastcsv.reader.CsvReader;
 import de.siegmar.fastcsv.reader.CsvRecord;
 import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
 import ru.bivchallenge.config.CastleConfig;
 import ru.bivchallenge.dto.LegalEntity;
-import ru.bivchallenge.module.LocalDataModule;
 
 import java.nio.file.Path;
 import java.util.Map;
 
-@Component(modules = LocalDataModule.class)
 public class LegalEntityLocalProvider extends AbstractLocalDataProvider<LegalEntity> {
     private final Path legalEntityTablePath;
 

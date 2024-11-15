@@ -1,18 +1,14 @@
 package ru.bivchallenge.persistence;
 
-import dagger.Component;
 import de.siegmar.fastcsv.writer.CsvWriter;
 import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
 import ru.bivchallenge.config.CastleConfig;
 import ru.bivchallenge.dto.Benefeciar;
 import ru.bivchallenge.dto.BenefeciarSet;
-import ru.bivchallenge.module.LocalDataModule;
 
 import java.nio.file.Path;
 import java.util.Set;
 
-@Component(modules = LocalDataModule.class)
 public class BenefeciarLocalDataDispatcher implements DataDispatcher<BenefeciarSet> {
     private final Path benefeciariesTablePath;
     private final CsvWriter.CsvWriterBuilder csvWriterBuilder;
