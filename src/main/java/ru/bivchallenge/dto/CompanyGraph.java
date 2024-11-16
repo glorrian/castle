@@ -1,28 +1,28 @@
 package ru.bivchallenge.dto;
 
-import com.sun.source.doctree.EntityTree;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.Multigraph;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CompanyGraph {
-    private final Graph<Entity, DefaultWeightedEdge> graph;
+    private final Graph<String, DefaultWeightedEdge> graph;
     private final Company headCompany;
-    private final List<Entity> entities;
-
+    private final Map<Long, NaturalEntity> naturalEntityMap;
+    private final Map<Long, LegalEntity> legalEntityMap;
 
     public CompanyGraph(Company headCompany) {
         this.headCompany = headCompany;
-        this.entities = new ArrayList<>();
 
+        naturalEntityMap = new HashMap<>();
+        legalEntityMap = new HashMap<>();
         graph = new Multigraph<>(DefaultWeightedEdge.class);
-        graph.addVertex(headCompany);
+        graph.addVertex("H:" + headCompany.id());
     }
 
-    public Graph<Entity, DefaultWeightedEdge> getGraph() {
+    public Graph<String, DefaultWeightedEdge> getGraph() {
         return graph;
     }
 
@@ -31,49 +31,39 @@ public class CompanyGraph {
     }
 
     public void addNaturalEntity(NaturalEntity naturalEntity) {
-       // implementation is needed
-        if (!entities.stream().anyMatch(e -> e.id() == naturalEntity.id())) {
-            entities.add(naturalEntity);
-            graph.addVertex(naturalEntity);
+        if (naturalEntityMap.containsKey(naturalEntity.id())) {
+            graph.addVertex("N:" + naturalEntity.id());
+            naturalEntityMap.put(naturalEntity.id(), naturalEntity);
+        }
 
-            if (naturalEntity.getCompanyId() == headCompany.id()) {
-                graph.addEdge(naturalEntity, headCompany, new DefaultWeightedEdge());
-            } else {
-                boolean companyExists = entities.stream().anyMatch(e -> e instanceof Company && e.id() == naturalEntity.getCompanyId());
-
-                if (companyExists) {
-                    graph.addEdge(naturalEntity, entities.stream()
-                            .filter(e -> e instanceof Company && e.id() == naturalEntity.getCompanyId())
-                            .findFirst()
-                            .get(), new DefaultWeightedEdge());
-                }
-            }
+        if (!graph.containsEdge(
+                "N:" + naturalEntity.id(),
+                "L:" + naturalEntity.getCompanyId())
+        ) {
+            graph.addEdge("N:" + naturalEntity.id(),
+                    "L:" + naturalEntity.getCompanyId(),
+                    new DefaultWeightedEdge());
         }
     }
 
     public void addLegalEntity(LegalEntity legalEntity) {
-       // implementation is needed
-        if (!entities.stream().anyMatch(e -> e.id() == legalEntity.id())) {
-            entities.add(legalEntity);
-            graph.addVertex(legalEntity);
+        if (naturalEntityMap.containsKey(legalEntity.id())) {
+            graph.addVertex("N:" + legalEntity.id());
+            legalEntityMap.put(legalEntity.id(), legalEntity);
+        }
 
-            if (legalEntity.getCompanyId() == headCompany.id()) {
-                graph.addEdge(legalEntity, headCompany, new DefaultWeightedEdge());
-            } else {
-                boolean companyExists = entities.stream().anyMatch(e -> e instanceof Company && e.id() == legalEntity.getCompanyId());
-
-                if (companyExists) {
-                    graph.addEdge(legalEntity, entities.stream()
-                            .filter(e -> e instanceof Company && e.id() == legalEntity.getCompanyId())
-                            .findFirst()
-                            .get(), new DefaultWeightedEdge());
-                }
-            }
+        if (!graph.containsEdge(
+                "L:" + legalEntity.id(),
+                "L:" + legalEntity.getCompanyId())
+        ) {
+            graph.addEdge("L:" + legalEntity.id(),
+                    "L:" + legalEntity.getCompanyId(),
+                    new DefaultWeightedEdge());
         }
     }
 
     public BenefeciarSet getBeneficiaries() {
-       // implementation is needed
+        // implementation is needed
         return null;
     }
 }
