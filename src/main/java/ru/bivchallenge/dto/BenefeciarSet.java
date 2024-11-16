@@ -16,6 +16,10 @@ public class BenefeciarSet {
         return company;
     }
 
+    public HashSet<Benefeciar> getBeneficiaries() {
+        return beneficiaries;
+    }
+
     public void addBenefeciar(Benefeciar benefeciar) {
         beneficiaries.add(benefeciar);
     }
