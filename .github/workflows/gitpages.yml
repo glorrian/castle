@@ -3,7 +3,7 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main # Или другая ветка, в которой хранится ваша документация
+      - main
 
 jobs:
   build-and-deploy:
@@ -14,18 +14,18 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-        if: success() # Проверка успешного выполнения предыдущего шага
+        if: success()
 
       - name: Build documentation
         run: npm run build
-        if: success() # Проверка успешного выполнения предыдущего шага
+        if: success()
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ${{ env.PUBLISH_DIR || './docs' }} # Более гибкий подход
-          cname: your-custom-domain.com # (необязательно) Если вы используете кастомный домен
+          publish_dir: ${{ env.PUBLISH_DIR || './docs' }}
+          cname: your-custom-domain.com
 
       - name: Clean Up (Optional)
-        run: rm -rf ./docs/.git #Удаление .git директории из deploy каталога
+        run: rm -rf ./docs/.git 
