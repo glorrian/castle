@@ -19,8 +19,10 @@ dependencies {
     implementation 'org.jgrapht:jgrapht-core:1.5.2'
     implementation 'com.google.dagger:dagger:2.52'
 
-    testImplementation 'org.spockframework:spock-core:2.4-M4-groovy-4.0'
-    testImplementation 'org.codehaus.groovy:groovy-all:3.0.23'
+    implementation platform('org.apache.groovy:groovy-bom:4.0.24')
+    implementation 'org.apache.groovy:groovy'
+    testImplementation platform("org.spockframework:spock-bom:2.3-groovy-4.0")
+    testImplementation "org.spockframework:spock-core"
 }
 
 application {
@@ -42,6 +44,12 @@ graalvmNative {
     }
 }
 
+tasks.test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
 
 
 
