@@ -89,8 +89,9 @@ public class ProcessDataExecutor implements Executor {
                     benefeciarSet.add(beneficiaries);
                 }
             });
+            benefeciarSetDataDispatcher.dispatch(benefeciarSet);
             var _end = System.currentTimeMillis();
-            System.out.println("Beneficiaries extraction time: " + (_end - _start) + "ms");
+            System.out.println("Beneficiares extraction time: " + (_end - _start) + "ms");
         }
     }
 }
