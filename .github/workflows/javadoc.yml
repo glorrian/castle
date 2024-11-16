@@ -1,0 +1,32 @@
+name: Deploy javadoc to GitHub Pages
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup GraalVM CE
+        uses: graalvm/setup-graalvm@v1.2.5
+        with:
+          distribution: 'graalvm'
+          java-version: 21
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@v1.0.4
+
+      - name: Generate Javadoc
+        run: ./gradlew clean javadoc
+
+      - name: Deploy Javadoc to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            publish_dir: build/docs/javadoc
