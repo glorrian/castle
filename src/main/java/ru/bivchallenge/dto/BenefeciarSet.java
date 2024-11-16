@@ -23,16 +23,4 @@ public class BenefeciarSet {
     public void addBenefeciar(Benefeciar benefeciar) {
         beneficiaries.add(benefeciar);
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof BenefeciarSet that)) return false;
-        return Objects.equals(getCompany(), that.getCompany()) && Objects.equals(beneficiaries, that.beneficiaries);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getCompany(), getClass());
-    }
 }
