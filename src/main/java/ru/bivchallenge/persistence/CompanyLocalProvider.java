@@ -9,6 +9,18 @@ import ru.bivchallenge.dto.Company;
 import java.nio.file.Path;
 import java.util.Map;
 
+/**
+ * The {@code CompanyLocalProvider} class is responsible for providing {@link Company} data
+ * from a local CSV file. It extends {@link AbstractLocalDataProvider} to leverage common
+ * CSV reading functionality.
+ *
+ * <p>This class uses a {@link CsvReader} to read and parse company data from the file specified
+ * in the {@link CastleConfig}. It also provides mechanisms to repair data if necessary.
+ *
+ * @see AbstractLocalDataProvider
+ * @see CsvReader
+ * @see Company
+ */
 public class CompanyLocalProvider extends AbstractLocalDataProvider<Company> {
     private final Path companiesTablePath;
 

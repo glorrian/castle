@@ -2,7 +2,6 @@ package ru.bivchallenge.persistence;
 
 import de.siegmar.fastcsv.reader.CsvReader;
 import de.siegmar.fastcsv.reader.CsvRecord;
-import ru.bivchallenge.dto.Company;
 import ru.bivchallenge.dto.Entity;
 
 import java.io.IOException;
