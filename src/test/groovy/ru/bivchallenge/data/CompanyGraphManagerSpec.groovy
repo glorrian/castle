@@ -141,4 +141,67 @@ class CompanyGraphManagerSpec extends Specification {
         beneficiaries.toArray()[0].naturalEntity == naturalEntity
         beneficiaries.toArray()[0].percent == 0.8 * 0.6 * 0.7
     }
+
+    def "getBeneficiaries should handle entities connected via multiple levels2"() {
+        given:
+        def legalEntity1 = new LegalEntity(201L, 1L, "321", "123", "Legal Entity 1")
+        def legalEntity2 = new LegalEntity(202L, 1L, "322", "124", "Legal Entity 2")
+        def legalEntity3 = new LegalEntity(203L, 202L, "322", "125", "Legal Entity 3")
+        def naturalEntity = new NaturalEntity(101L, 1L, "124", "Doe", "John", "")
+        def naturalEntity1 = new NaturalEntity(101L, 203L, "124", "Doe", "John", "")
+        def naturalEntity2 = new NaturalEntity(102L, 201L, "125", "Don", "Jod", "")
+        def naturalEntity21 = new NaturalEntity(102L, 202L, "125", "Don", "Jod", "")
+        def naturalEntity3 = new NaturalEntity(103L, 201L, "126", "Dok", "Jok", "")
+
+        legalEntity1.sharePercent = 0.3
+        legalEntity2.sharePercent = 0.5
+        legalEntity3.sharePercent = 0.5
+        naturalEntity.sharePercent = 0.2
+        naturalEntity1.sharePercent = 1
+        naturalEntity2.sharePercent = 0.5
+        naturalEntity21.sharePercent = 0.5
+        naturalEntity3.sharePercent = 0.5
+        def legalEntityRegistry = [201L: legalEntity1, 202L: legalEntity2, 203L: legalEntity3]
+        /*
+            Expected graph structure:
+
+        /    |       \
+      (30%)   (20%)   (50%)
+      /               \
+   L:201    N:101       L:202
+    /   \              |
+(50%)  (50%)       (50%) \
+  |      |             \   \
+N:102  N:103         L:203  N:102
+                   (50%) |
+                        |
+                      N:101
+                   (100% from L:203)
+        */
+
+        when:
+        def manager = new CompanyGraphManager(headCompany, legalEntityRegistry)
+        manager.addEntity(legalEntity1)
+        manager.addEntity(legalEntity2)
+        manager.addEntity(legalEntity3)
+
+        manager.addEntity(naturalEntity)
+        manager.addEntity(naturalEntity1)
+        manager.addEntity(naturalEntity2)
+        manager.addEntity(naturalEntity21)
+        manager.addEntity(naturalEntity3)
+
+        and:
+        System.out.println("Graph structure:");
+        manager.graph.vertexSet().forEach(vertex -> System.out.println("Vertex: " + vertex));
+        manager.graph.edgeSet().forEach(edge -> System.out.println("Edge: " + manager.graph.getEdgeSource(edge) + " -> " + manager.graph.getEdgeTarget(edge)));
+        def beneficiaries = manager.getBeneficiaries().getBeneficiaries()
+
+        then:
+        beneficiaries.size() == 2
+        beneficiaries.toArray()[0].naturalEntity == naturalEntity
+        beneficiaries.toArray()[0].percent == 0.2+0.5*0.5*1
+        beneficiaries.toArray()[1].naturalEntity == naturalEntity2
+        beneficiaries.toArray()[1].percent == 0.3*0.5+0.5*0.5
+    }
 }
