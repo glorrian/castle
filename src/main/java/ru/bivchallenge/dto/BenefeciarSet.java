@@ -1,7 +1,6 @@
 package ru.bivchallenge.dto;
 
 import java.util.HashSet;
-import java.util.Objects;
 
 public class BenefeciarSet {
     private final Company company;

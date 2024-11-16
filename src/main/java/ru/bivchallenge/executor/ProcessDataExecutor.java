@@ -84,7 +84,7 @@ public class ProcessDataExecutor implements Executor {
             Set<BenefeciarSet> benefeciarSet = new HashSet<>();
             companyGraphMap.forEach((key, companyGraph) -> {
                 BenefeciarSet beneficiaries = companyGraph.getBeneficiaries();
-                if (beneficiaries != null && beneficiaries.getBeneficiaries().isEmpty()) {
+                if (beneficiaries != null && !beneficiaries.getBeneficiaries().isEmpty()) {
                     benefeciarSet.add(beneficiaries);
                 }
             });
