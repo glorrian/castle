@@ -28,5 +28,16 @@ public class CompanyGraph {
         return headCompany;
     }
 
-    // logic for handle entity's relations
+    public void addNaturalEntity(NaturalEntity naturalEntity) {
+       // implementation is needed
+    }
+
+    public void addLegalEntity(LegalEntity legalEntity) {
+       // implementation is needed
+    }
+
+    public BenefeciarSet getBeneficiaries() {
+       // implementation is needed
+        return null;
+    }
 }
