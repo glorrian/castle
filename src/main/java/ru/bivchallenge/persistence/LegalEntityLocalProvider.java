@@ -45,12 +45,17 @@ public class LegalEntityLocalProvider extends AbstractLocalDataProvider<LegalEnt
         if (csvRecord.getFieldCount() < 5) {
             return null;
         }
-        return new LegalEntity(
+        LegalEntity legalEntity = new LegalEntity(
                 Long.parseLong(csvRecord.getField(0)),
                 Long.parseLong(csvRecord.getField(1)),
                 csvRecord.getField(2),
                 csvRecord.getField(3),
                 csvRecord.getField(4)
         );
+        if (csvRecord.getFieldCount() == 6) {
+            legalEntity.setShare(Double.parseDouble(csvRecord.getField(5).isEmpty() ? "0" : csvRecord.getField(5)));
+            legalEntity.setSharePercent(Double.parseDouble(csvRecord.getField(6).isEmpty() ? "0" : csvRecord.getField(6)));
+        }
+        return legalEntity;
     }
 }

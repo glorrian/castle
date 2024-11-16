@@ -16,7 +16,7 @@ import java.util.Objects;
  * @see NaturalEntity
  * @see RecordSeparable
  */
-public record Benefeciar(NaturalEntity naturalEntity, long percent) implements RecordSeparable {
+public record Benefeciar(NaturalEntity naturalEntity, double percent) implements RecordSeparable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
