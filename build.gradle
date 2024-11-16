@@ -1,7 +1,8 @@
 plugins {
-    id 'java'
-    id 'application'
-    id 'org.graalvm.buildtools.native' version '0.10.3'
+    id("java")
+    id("groovy")
+    id("application")
+    id("org.graalvm.buildtools.native") version "0.10.3"
 }
 
 version = "0.1"
@@ -13,9 +14,13 @@ repositories {
 
 dependencies {
     annotationProcessor 'com.google.dagger:dagger-compiler:2.52'
+
     implementation 'de.siegmar:fastcsv:3.4.0'
     implementation 'org.jgrapht:jgrapht-core:1.5.2'
     implementation 'com.google.dagger:dagger:2.52'
+
+    testImplementation 'org.spockframework:spock-core:2.4-M4-groovy-4.0'
+    testImplementation 'org.codehaus.groovy:groovy-all:3.0.23'
 }
 
 application {
