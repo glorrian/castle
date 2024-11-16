@@ -1,4 +1,7 @@
-package ru.bivchallenge.dto;
+package ru.bivchallenge.data;
+
+import ru.bivchallenge.dto.Benefeciar;
+import ru.bivchallenge.dto.Company;
 
 import java.util.HashSet;
 

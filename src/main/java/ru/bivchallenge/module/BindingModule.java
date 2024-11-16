@@ -2,7 +2,7 @@ package ru.bivchallenge.module;
 
 import dagger.Binds;
 import dagger.Module;
-import ru.bivchallenge.dto.BenefeciarSet;
+import ru.bivchallenge.data.BenefeciarSet;
 import ru.bivchallenge.dto.Company;
 import ru.bivchallenge.dto.LegalEntity;
 import ru.bivchallenge.dto.NaturalEntity;

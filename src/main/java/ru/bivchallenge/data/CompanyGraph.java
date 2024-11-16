@@ -1,8 +1,9 @@
-package ru.bivchallenge.dto;
+package ru.bivchallenge.data;
 
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.Multigraph;
+import ru.bivchallenge.dto.*;
 
 import java.util.HashMap;
 import java.util.HashSet;
