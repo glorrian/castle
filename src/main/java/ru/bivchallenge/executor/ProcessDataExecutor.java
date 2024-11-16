@@ -1,8 +1,8 @@
 package ru.bivchallenge.executor;
 
 import jakarta.inject.Inject;
-import ru.bivchallenge.data.BenefeciarSet;
-import ru.bivchallenge.data.CompanyGraph;
+import ru.bivchallenge.data.BenefeciarRegistry;
+import ru.bivchallenge.data.CompanyGraphManager;
 import ru.bivchallenge.dto.*;
 import ru.bivchallenge.persistence.DataDispatcher;
 import ru.bivchallenge.persistence.DataProvider;
@@ -30,7 +30,7 @@ import java.util.concurrent.Future;
  * <p><b>Workflow:</b></p>
  * <ul>
  *     <li>Fetches data for companies, legal entities, and natural entities concurrently.</li>
- *     <li>Builds {@link CompanyGraph} objects by associating legal and natural entities with companies.</li>
+ *     <li>Builds {@link CompanyGraphManager} objects by associating legal and natural entities with companies.</li>
  *     <li>Extracts beneficiary sets and dispatches them via the provided {@link DataDispatcher}.</li>
  * </ul>
  *
@@ -44,14 +44,14 @@ public class ProcessDataExecutor implements Executor {
     private final DataProvider<NaturalEntity> naturalEntityDataProvider;
     private final DataProvider<Company> companyDataProvider;
 
-    private final DataDispatcher<BenefeciarSet> benefeciarSetDataDispatcher;
+    private final DataDispatcher<BenefeciarRegistry> benefeciarSetDataDispatcher;
 
     @Inject
     public ProcessDataExecutor(
             DataProvider<LegalEntity> legalEntityDataProvider,
             DataProvider<NaturalEntity> naturalEntityDataProvider,
             DataProvider<Company> companyDataProvider,
-            DataDispatcher<BenefeciarSet> benefeciarSetDataDispatcher
+            DataDispatcher<BenefeciarRegistry> benefeciarSetDataDispatcher
     ) {
         this.legalEntityDataProvider = legalEntityDataProvider;
         this.naturalEntityDataProvider = naturalEntityDataProvider;
@@ -69,29 +69,29 @@ public class ProcessDataExecutor implements Executor {
             Map<Long, Company> companyMap = companyDataFuture.get();
             Map<Long, LegalEntity> legalEntityMap = legalEntityDataFuture.get();
             GraphInitializerProcessor graphInitializerProcessor = new GraphInitializerProcessor(legalEntityMap);
-            Map<Long, CompanyGraph> companyGraphMap = graphInitializerProcessor.apply(companyMap);
+            Map<Long, CompanyGraphManager> companyGraphMap = graphInitializerProcessor.apply(companyMap);
             legalEntityMap.forEach((key, legalEntity) -> {
-                CompanyGraph companyGraph = companyGraphMap.get(legalEntity.getCompanyId());
-                if (companyGraph != null) {
-                    companyGraph.addLegalEntity(legalEntity);
+                CompanyGraphManager companyGraphManager = companyGraphMap.get(legalEntity.getCompanyId());
+                if (companyGraphManager != null) {
+                    companyGraphManager.addEntity(legalEntity);
                 }
             });
             Map<Long, NaturalEntity> naturalEntityMap = naturalEntityDataFuture.get();
             naturalEntityMap.forEach((key, naturalEntity) -> {
-                CompanyGraph companyGraph = companyGraphMap.get(naturalEntity.getCompanyId());
-                if (companyGraph != null) {
-                    companyGraph.addNaturalEntity(naturalEntity);
+                CompanyGraphManager companyGraphManager = companyGraphMap.get(naturalEntity.getCompanyId());
+                if (companyGraphManager != null) {
+                    companyGraphManager.addEntity(naturalEntity);
                 }
             });
             var _start = System.currentTimeMillis();
-            Set<BenefeciarSet> benefeciarSet = new HashSet<>();
-            companyGraphMap.forEach((key, companyGraph) -> {
-                BenefeciarSet beneficiaries = companyGraph.getBeneficiaries();
+            Set<BenefeciarRegistry> benefeciarRegistry = new HashSet<>();
+            companyGraphMap.forEach((key, companyGraphManager) -> {
+                BenefeciarRegistry beneficiaries = companyGraphManager.getBeneficiaries();
                 if (beneficiaries != null && !beneficiaries.getBeneficiaries().isEmpty()) {
-                    benefeciarSet.add(beneficiaries);
+                    benefeciarRegistry.add(beneficiaries);
                 }
             });
-            benefeciarSetDataDispatcher.dispatch(benefeciarSet);
+            benefeciarSetDataDispatcher.dispatch(benefeciarRegistry);
             var _end = System.currentTimeMillis();
             System.out.println("Beneficiares extraction time: " + (_end - _start) + "ms");
         }

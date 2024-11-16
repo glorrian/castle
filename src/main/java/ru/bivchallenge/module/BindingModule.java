@@ -2,7 +2,7 @@ package ru.bivchallenge.module;
 
 import dagger.Binds;
 import dagger.Module;
-import ru.bivchallenge.data.BenefeciarSet;
+import ru.bivchallenge.data.BenefeciarRegistry;
 import ru.bivchallenge.dto.Company;
 import ru.bivchallenge.dto.LegalEntity;
 import ru.bivchallenge.dto.NaturalEntity;
@@ -26,5 +26,5 @@ public abstract class BindingModule {
 
     @Binds
     @Singleton
-    abstract DataDispatcher<BenefeciarSet> bindBenefeciarLocalDataDispatcher(BenefeciarLocalDataDispatcher benefeciarLocalDataDispatcher);
+    abstract DataDispatcher<BenefeciarRegistry> bindBenefeciarLocalDataDispatcher(BenefeciarLocalDataDispatcher benefeciarLocalDataDispatcher);
 }

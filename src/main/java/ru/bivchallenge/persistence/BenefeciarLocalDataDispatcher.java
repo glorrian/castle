@@ -4,23 +4,23 @@ import de.siegmar.fastcsv.writer.CsvWriter;
 import jakarta.inject.Inject;
 import ru.bivchallenge.config.CastleConfig;
 import ru.bivchallenge.dto.Benefeciar;
-import ru.bivchallenge.data.BenefeciarSet;
+import ru.bivchallenge.data.BenefeciarRegistry;
 
 import java.nio.file.Path;
 import java.util.Set;
 
 /**
- * The {@code BenefeciarLocalDataDispatcher} class is responsible for writing {@link BenefeciarSet} data
+ * The {@code BenefeciarLocalDataDispatcher} class is responsible for writing {@link BenefeciarRegistry} data
  * to a local CSV file. It uses the FastCSV library to perform efficient CSV writing with configurable buffer sizes.
  *
  * <p>This class fetches the file path and CSV writer configuration from the provided {@link CastleConfig}.
  * The {@code dispatch} method writes company information followed by its associated beneficiaries into the CSV file.
  *
- * @see BenefeciarSet
+ * @see BenefeciarRegistry
  * @see CsvWriter
  * @see CastleConfig
  */
-public class BenefeciarLocalDataDispatcher implements DataDispatcher<BenefeciarSet> {
+public class BenefeciarLocalDataDispatcher implements DataDispatcher<BenefeciarRegistry> {
     private final Path benefeciariesTablePath;
     private final CsvWriter.CsvWriterBuilder csvWriterBuilder;
 
@@ -35,12 +35,12 @@ public class BenefeciarLocalDataDispatcher implements DataDispatcher<BenefeciarS
     }
 
     @Override
-    public void dispatch(Set<BenefeciarSet> set) {
+    public void dispatch(Set<BenefeciarRegistry> set) {
         try (CsvWriter csvWriter = csvWriterBuilder.build(benefeciariesTablePath)) {
-            for (BenefeciarSet benefeciarSet : set) {
-                if (!benefeciarSet.getBeneficiaries().isEmpty()) {
-                    csvWriter.writeRecord(benefeciarSet.getCompany().separate());
-                    for (Benefeciar benefeciar: benefeciarSet.getBeneficiaries()) {
+            for (BenefeciarRegistry benefeciarRegistry : set) {
+                if (!benefeciarRegistry.getBeneficiaries().isEmpty()) {
+                    csvWriter.writeRecord(benefeciarRegistry.getCompany().separate());
+                    for (Benefeciar benefeciar: benefeciarRegistry.getBeneficiaries()) {
                         csvWriter.writeRecord(benefeciar.separate());
                     }
                 }
