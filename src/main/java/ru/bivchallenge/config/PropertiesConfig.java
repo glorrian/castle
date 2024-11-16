@@ -24,10 +24,12 @@ import java.util.Properties;
 public class PropertiesConfig implements CastleConfig {
 
     private final Properties properties;
+    private final String[] args;
 
     @Inject
-    public PropertiesConfig() {
+    public PropertiesConfig(String[] args) {
         properties = new Properties();
+        this.args = args;
         InputStream input = PropertiesConfig.class.getClassLoader().getResourceAsStream("application.properties");
         try {
             properties.load(input);
@@ -44,26 +46,37 @@ public class PropertiesConfig implements CastleConfig {
 
     @Override
     public TableConfig getTableConfig() {
+        boolean isProperty = args.length < 4;
+        return createTableConfig(
+                isProperty ? properties.getProperty("table.companies") : args[0],
+                isProperty ? properties.getProperty("table.founder-legal") : args[1],
+                isProperty ? properties.getProperty("table.founder-natural") : args[2],
+                isProperty ? properties.getProperty("table.beneficiaries") : args[3]
+        );
+    }
+
+    private TableConfig createTableConfig(String companyPath, String founderLegalPath, String founderNaturalPath, String beneficiariesPath) {
         return new TableConfig() {
             @Override
             public Path getCompanyTablePath() {
-                return Path.of(properties.getProperty("table.companies"));
+                return Path.of(companyPath);
             }
 
             @Override
             public Path getFounderLegalTablePath() {
-                return Path.of(properties.getProperty("table.founder-legal"));
+                return Path.of(founderLegalPath);
             }
 
             @Override
             public Path getFounderNaturalTablePath() {
-                return Path.of(properties.getProperty("table.founder-natural"));
+                return Path.of(founderNaturalPath);
             }
 
             @Override
             public Path getBeneficiariesTablePath() {
-                return Path.of(properties.getProperty("table.beneficiaries"));
+                return Path.of(beneficiariesPath);
             }
         };
     }
 }
+

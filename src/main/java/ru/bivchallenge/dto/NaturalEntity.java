@@ -20,7 +20,7 @@ import java.util.Objects;
  *
  * @see Entity
  */
-public class NaturalEntity implements Entity {
+public class NaturalEntity implements OwnerEntity {
     private final long id;
     private final long companyId;
     private final String inn;
@@ -44,6 +44,7 @@ public class NaturalEntity implements Entity {
         return id;
     }
 
+    @Override
     public long getCompanyId() {
         return companyId;
     }

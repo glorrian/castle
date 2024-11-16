@@ -7,7 +7,7 @@ import java.util.Objects;
  * This class implements the {@link Entity} interface and provides additional fields
  * to store details about the legal entity.
  */
-public class LegalEntity implements Entity {
+public class LegalEntity implements OwnerEntity {
     private final long id;
     private final long companyId;
     private final String ogrn;
@@ -29,6 +29,7 @@ public class LegalEntity implements Entity {
         return id;
     }
 
+    @Override
     public long getCompanyId() {
         return companyId;
     }

@@ -31,6 +31,6 @@ public record Benefeciar(NaturalEntity naturalEntity, double percent) implements
 
     @Override
     public String[] separate() {
-        return new String[] {"\t", String.valueOf(naturalEntity.id()), naturalEntity.getLastName(), naturalEntity.getFirstName(), naturalEntity.getSecondName(), String.valueOf(percent)};
+        return new String[] {"", String.valueOf(naturalEntity.id()), naturalEntity.getLastName(), naturalEntity.getFirstName(), naturalEntity.getSecondName(), String.valueOf(percent)};
     }
 }
