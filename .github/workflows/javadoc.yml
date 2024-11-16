@@ -6,27 +6,13 @@ on:
       - master
 
 jobs:
-  build-and-deploy:
+  publish:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Setup GraalVM CE
-        uses: graalvm/setup-graalvm@v1.2.5
+      - name: Deploy JavaDoc 🚀
+        uses: MathieuSoysal/Javadoc-publisher.yml@v2.3.0
         with:
-          distribution: 'graalvm'
-          java-version: 21
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Validate Gradle wrapper
-        uses: gradle/wrapper-validation-action@v1.0.4
-
-      - name: Generate Javadoc
-        run: ./gradlew clean javadoc
-
-      - name: Deploy Javadoc to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-            github_token: ${{ secrets.GITHUB_TOKEN }}
-            publish_dir: ./public
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          javadoc-branch: javadoc
+          java-version: 17
+          target-folder: javadoc
