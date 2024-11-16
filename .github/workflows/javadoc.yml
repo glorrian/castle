@@ -16,4 +16,5 @@ jobs:
         uses: dev-vince/actions-publish-javadoc@v1.0.1
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          java-version: "21"
           project: gradle
