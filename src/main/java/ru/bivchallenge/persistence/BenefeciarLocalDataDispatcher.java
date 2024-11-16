@@ -37,6 +37,8 @@ public class BenefeciarLocalDataDispatcher implements DataDispatcher<BenefeciarR
     @Override
     public void dispatch(Set<BenefeciarRegistry> set) {
         try (CsvWriter csvWriter = csvWriterBuilder.build(benefeciariesTablePath)) {
+            csvWriter.writeRecord("company_id", "ogrn", "inn", "full_name");
+            csvWriter.writeRecord("", "inn", "last_name", "first_name", "second_name", "percent");
             for (BenefeciarRegistry benefeciarRegistry : set) {
                 if (!benefeciarRegistry.getBeneficiaries().isEmpty()) {
                     csvWriter.writeRecord(benefeciarRegistry.getCompany().separate());

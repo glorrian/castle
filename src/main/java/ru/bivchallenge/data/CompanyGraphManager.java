@@ -1,7 +1,6 @@
 package ru.bivchallenge.data;
 
 import org.jgrapht.Graph;
-import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.Multigraph;
 import ru.bivchallenge.dto.*;
 
@@ -12,27 +11,43 @@ import java.util.*;
  * between the head company, legal entities, and natural entities.
  */
 public class CompanyGraphManager {
-    private final Graph<String, DefaultEdge> graph;
+    private final Graph<String, WeightedEdge> graph;
     private final Company headCompany;
     private final Map<Long, NaturalEntity> naturalEntityMap;
     private final Map<Long, LegalEntity> legalEntityMap;
     private final Map<Long, LegalEntity> legalEntityRegistry;
 
+    /**
+     * Constructs a new CompanyGraphManager with the given head company and legal entity registry.
+     *
+     * @param headCompany the head company
+     * @param legalEntityRegistry a map of legal entities by their IDs
+     */
     public CompanyGraphManager(Company headCompany, Map<Long, LegalEntity> legalEntityRegistry) {
         this.headCompany = headCompany;
         this.legalEntityRegistry = legalEntityRegistry;
 
         this.naturalEntityMap = new HashMap<>();
         this.legalEntityMap = new HashMap<>();
-        this.graph = new Multigraph<>(DefaultEdge.class);
+        this.graph = new Multigraph<>(WeightedEdge.class);
 
         graph.addVertex(vertexId("H", headCompany.id()));
     }
 
-    public Graph<String, DefaultEdge> getGraph() {
+    /**
+     * Returns the graph representing the company's structure.
+     *
+     * @return the graph of the company structure
+     */
+    public Graph<String, WeightedEdge> getGraph() {
         return graph;
     }
 
+    /**
+     * Returns the head company.
+     *
+     * @return the head company
+     */
     public Company getHeadCompany() {
         return headCompany;
     }
@@ -54,7 +69,8 @@ public class CompanyGraphManager {
             addLegalEntityIfRegistered(naturalEntity.getCompanyId());
         }
 
-        graph.addEdge(naturalVertex, companyVertex);
+        WeightedEdge edge = new WeightedEdge(naturalEntity.getSharePercent());
+        graph.addEdge(naturalVertex, companyVertex, edge);
     }
 
     /**
@@ -74,25 +90,21 @@ public class CompanyGraphManager {
             addLegalEntityIfRegistered(legalEntity.getCompanyId());
         }
 
-        graph.addEdge(legalVertex, parentVertex);
+        WeightedEdge edge = new WeightedEdge(legalEntity.getSharePercent());
+        graph.addEdge(legalVertex, parentVertex, edge);
     }
 
     /**
      * Calculates and returns the beneficiaries (natural entities with more than 25% ownership).
      *
-     * @return a set of beneficiaries
+     * @return a registry of beneficiaries
      */
     public BenefeciarRegistry getBeneficiaries() {
         BenefeciarRegistry beneficiaries = new BenefeciarRegistry(headCompany);
 
         for (Map.Entry<Long, NaturalEntity> entry : naturalEntityMap.entrySet()) {
             String naturalVertex = vertexId("N", entry.getKey());
-            double totalOwnership = calculateTotalOwnership(
-                    naturalVertex,
-                    vertexId("H", headCompany.id()),
-                    1.0,
-                    new HashSet<>()
-            );
+            double totalOwnership = defineOwnershipPercentageForNaturalEntity(naturalVertex);
 
             if (totalOwnership > 0.25) {
                 beneficiaries.getBeneficiaries().add(
@@ -104,41 +116,34 @@ public class CompanyGraphManager {
         return beneficiaries;
     }
 
-    private double calculateTotalOwnership(String source, String target, double cumulativePercentage, Set<String> visited) {
-        if (source.equals(target)) {
-            return cumulativePercentage;
+    private double defineOwnershipPercentageForNaturalEntity(String naturalVertex) {
+        double totalOwnership = 0.0;
+        for (WeightedEdge edge : graph.outgoingEdgesOf(naturalVertex)) {
+            String connectedVertex = getConnectedVertex(naturalVertex, edge);
+            double ownershipPercentage = edge.getWeight();
+            totalOwnership += calculateOwnershipThroughLinks(connectedVertex, ownershipPercentage, new HashSet<>());
+        }
+        return totalOwnership;
+    }
+
+    private double calculateOwnershipThroughLinks(String currentVertex, double currentOwnership, Set<String> visited) {
+        if (!visited.add(currentVertex)) {
+            return 0.0;
         }
 
-        if (!visited.add(source)) {
-            return 0.0;
+        if (currentVertex.equals(vertexId("H", headCompany.id()))) {
+            return currentOwnership;
         }
 
         double totalOwnership = 0.0;
 
-        for (DefaultEdge edge : graph.outgoingEdgesOf(source)) {
-            String connectedVertex = getConnectedVertex(source, edge);
-            double ownershipPercentage = getOwnershipPercentage(source, connectedVertex);
-            totalOwnership += calculateTotalOwnership(
-                    connectedVertex, target, cumulativePercentage * ownershipPercentage, visited
-            );
+        for (WeightedEdge edge : graph.outgoingEdgesOf(currentVertex)) {
+            String connectedVertex = getConnectedVertex(currentVertex, edge);
+            double ownershipPercentage = edge.getWeight();
+            totalOwnership += currentOwnership * ownershipPercentage * calculateOwnershipThroughLinks(connectedVertex, 1.0, visited);
         }
 
-        visited.remove(source);
         return totalOwnership;
-    }
-
-    private double getOwnershipPercentage(String source, String target) {
-        long entityId = Long.parseLong(source.split(":")[1]);
-
-        if (source.startsWith("N:")) {
-            NaturalEntity naturalEntity = naturalEntityMap.get(entityId);
-            return naturalEntity != null ? naturalEntity.getSharePercent() : 0.0;
-        } else if (source.startsWith("L:")) {
-            LegalEntity legalEntity = legalEntityMap.get(entityId);
-            return legalEntity != null ? legalEntity.getSharePercent() : 0.0;
-        }
-
-        return 0.0;
     }
 
     private String getCompanyVertex(long companyId) {
@@ -156,7 +161,7 @@ public class CompanyGraphManager {
         return prefix + ":" + id;
     }
 
-    private String getConnectedVertex(String source, DefaultEdge edge) {
+    private String getConnectedVertex(String source, WeightedEdge edge) {
         return graph.getEdgeTarget(edge).equals(source) ? graph.getEdgeSource(edge) : graph.getEdgeTarget(edge);
     }
 }

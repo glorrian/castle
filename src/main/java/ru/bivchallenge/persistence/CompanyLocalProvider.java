@@ -42,15 +42,26 @@ public class CompanyLocalProvider extends AbstractLocalDataProvider<Company> {
     }
 
     private Company parseCompany(CsvRecord csvRecord) {
-        if (csvRecord.getFieldCount() < 4) {
+        if (csvRecord.getFieldCount() != 4) {
            return null;
         }
-        return new Company(
-                Long.parseLong(csvRecord.getField(0)),
-                csvRecord.getField(1),
-                csvRecord.getField(2),
-                csvRecord.getField(3)
-        );
+        try {
+            return new Company(
+                    Long.parseLong(validate(csvRecord.getField(0))),
+                    validate(csvRecord.getField(1)),
+                    validate(csvRecord.getField(2)),
+                    validate(csvRecord.getField(3))
+            );
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private String validate(String value) {
+        if (value == null || value.isBlank()) {
+            throw new IllegalArgumentException();
+        }
+        return value;
     }
 
     private Company repairCompany(String lastPart, Company company) {

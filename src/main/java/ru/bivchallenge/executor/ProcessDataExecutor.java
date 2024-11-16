@@ -83,7 +83,6 @@ public class ProcessDataExecutor implements Executor {
                     companyGraphManager.addEntity(naturalEntity);
                 }
             });
-            var _start = System.currentTimeMillis();
             Set<BenefeciarRegistry> benefeciarRegistry = new HashSet<>();
             companyGraphMap.forEach((key, companyGraphManager) -> {
                 BenefeciarRegistry beneficiaries = companyGraphManager.getBeneficiaries();
@@ -92,8 +91,6 @@ public class ProcessDataExecutor implements Executor {
                 }
             });
             benefeciarSetDataDispatcher.dispatch(benefeciarRegistry);
-            var _end = System.currentTimeMillis();
-            System.out.println("Beneficiares extraction time: " + (_end - _start) + "ms");
         }
     }
 }
