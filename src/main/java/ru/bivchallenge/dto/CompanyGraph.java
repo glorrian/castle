@@ -47,7 +47,7 @@ public class CompanyGraph {
     }
 
     public void addLegalEntity(LegalEntity legalEntity) {
-        if (naturalEntityMap.containsKey(legalEntity.id())) {
+        if (legalEntityMap.containsKey(legalEntity.id())) {
             graph.addVertex("N:" + legalEntity.id());
             legalEntityMap.put(legalEntity.id(), legalEntity);
         }
@@ -63,7 +63,6 @@ public class CompanyGraph {
     }
 
     public BenefeciarSet getBeneficiaries() {
-        // implementation is needed
-        return null;
+
     }
 }
