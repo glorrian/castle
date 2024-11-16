@@ -38,9 +38,11 @@ public class BenefeciarLocalDataDispatcher implements DataDispatcher<BenefeciarS
     public void dispatch(Set<BenefeciarSet> set) {
         try (CsvWriter csvWriter = csvWriterBuilder.build(benefeciariesTablePath)) {
             for (BenefeciarSet benefeciarSet : set) {
-                csvWriter.writeRecord(benefeciarSet.company().separate());
-                for (Benefeciar benefeciar: benefeciarSet.naturalEntitySet()) {
-                    csvWriter.writeRecord(benefeciar.separate());
+                if (!benefeciarSet.getBeneficiaries().isEmpty()) {
+                    csvWriter.writeRecord(benefeciarSet.getCompany().separate());
+                    for (Benefeciar benefeciar: benefeciarSet.getBeneficiaries()) {
+                        csvWriter.writeRecord(benefeciar.separate());
+                    }
                 }
             }
         } catch (Exception e) {
