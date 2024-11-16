@@ -9,6 +9,17 @@ import ru.bivchallenge.dto.BenefeciarSet;
 import java.nio.file.Path;
 import java.util.Set;
 
+/**
+ * The {@code BenefeciarLocalDataDispatcher} class is responsible for writing {@link BenefeciarSet} data
+ * to a local CSV file. It uses the FastCSV library to perform efficient CSV writing with configurable buffer sizes.
+ *
+ * <p>This class fetches the file path and CSV writer configuration from the provided {@link CastleConfig}.
+ * The {@code dispatch} method writes company information followed by its associated beneficiaries into the CSV file.
+ *
+ * @see BenefeciarSet
+ * @see CsvWriter
+ * @see CastleConfig
+ */
 public class BenefeciarLocalDataDispatcher implements DataDispatcher<BenefeciarSet> {
     private final Path benefeciariesTablePath;
     private final CsvWriter.CsvWriterBuilder csvWriterBuilder;

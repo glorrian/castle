@@ -2,6 +2,24 @@ package ru.bivchallenge.dto;
 
 import java.util.Objects;
 
+/**
+ * The {@code NaturalEntity} class represents a natural (individual) entity associated with a company.
+ * It contains identifying information such as an ID, company ID, tax identification number (INN), and personal details.
+ * <p>
+ * This class also implements the {@link Entity} interface, providing a unique identifier through the {@link #id()} method.
+ *
+ * <p><b>Fields:</b></p>
+ * <ul>
+ *     <li>{@code id} - Unique identifier for the natural entity.</li>
+ *     <li>{@code companyId} - Identifier of the company associated with this natural entity.</li>
+ *     <li>{@code inn} - Tax identification number (INN).</li>
+ *     <li>{@code lastName}, {@code firstName}, {@code secondName} - Personal details of the individual.</li>
+ *     <li>{@code share} - The ownership share held by the natural entity.</li>
+ *     <li>{@code sharePercent} - The ownership share as a percentage of the total.</li>
+ * </ul>
+ *
+ * @see Entity
+ */
 public class NaturalEntity implements Entity {
     private final long id;
     private final long companyId;
