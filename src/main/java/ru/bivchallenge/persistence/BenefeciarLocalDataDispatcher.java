@@ -4,7 +4,7 @@ import de.siegmar.fastcsv.writer.CsvWriter;
 import jakarta.inject.Inject;
 import ru.bivchallenge.config.CastleConfig;
 import ru.bivchallenge.dto.Benefeciar;
-import ru.bivchallenge.dto.BenefeciarSet;
+import ru.bivchallenge.data.BenefeciarSet;
 
 import java.nio.file.Path;
 import java.util.Set;

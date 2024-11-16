@@ -1,6 +1,8 @@
 package ru.bivchallenge.executor;
 
 import jakarta.inject.Inject;
+import ru.bivchallenge.data.BenefeciarSet;
+import ru.bivchallenge.data.CompanyGraph;
 import ru.bivchallenge.dto.*;
 import ru.bivchallenge.persistence.DataDispatcher;
 import ru.bivchallenge.persistence.DataProvider;

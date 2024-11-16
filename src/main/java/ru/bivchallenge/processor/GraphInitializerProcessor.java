@@ -1,6 +1,6 @@
 package ru.bivchallenge.processor;
 import ru.bivchallenge.dto.Company;
-import ru.bivchallenge.dto.CompanyGraph;
+import ru.bivchallenge.data.CompanyGraph;
 import ru.bivchallenge.dto.LegalEntity;
 
 import java.util.HashMap;
