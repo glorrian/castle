@@ -1,0 +1,31 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main # Или другая ветка, в которой хранится ваша документация
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: npm install
+        if: success() # Проверка успешного выполнения предыдущего шага
+
+      - name: Build documentation
+        run: npm run build
+        if: success() # Проверка успешного выполнения предыдущего шага
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ${{ env.PUBLISH_DIR || './docs' }} # Более гибкий подход
+          cname: your-custom-domain.com # (необязательно) Если вы используете кастомный домен
+
+      - name: Clean Up (Optional)
+        run: rm -rf ./docs/.git #Удаление .git директории из deploy каталога
