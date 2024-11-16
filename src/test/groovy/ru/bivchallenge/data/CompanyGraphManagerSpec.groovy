@@ -82,6 +82,18 @@ class CompanyGraphManagerSpec extends Specification {
         naturalEntity1.sharePercent = 0.8
         naturalEntity2.sharePercent = 0.2
         def benefeciar = new Benefeciar(naturalEntity1, 0.8)
+        /*
+            Expected graph structure:
+
+            H:1 (Head Company)
+             |
+             N:101 (John Doe, 80%) - Ownership > 25%
+             |
+             N:102 (Jane Doe, 20%) - Ownership <= 25%
+
+            Expected beneficiaries:
+            - John Doe (80%)
+        */
 
         when:
         def manager = new CompanyGraphManager(headCompany, legalEntityRegistry)
