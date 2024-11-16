@@ -63,6 +63,36 @@ public class CompanyGraph {
     }
 
     public BenefeciarSet getBeneficiaries() {
+        BenefeciarSet beneficiaries = new BenefeciarSet(headCompany);
 
+        for (Map.Entry<Long, NaturalEntity> entry : naturalEntityMap.entrySet()) {
+            String naturalEntityVertex = "N:" + entry.getKey();
+            double totalOwnership = calculateTotalOwnership(naturalEntityVertex, "H:" + headCompany.id(), 1.0);
+            if (totalOwnership > 25.0) {
+                beneficiaries.addBenefeciar(new Benefeciar(entry.getValue(), (long) totalOwnership));
+            }
+        }
+
+        return beneficiaries;
+    }
+
+    private double calculateTotalOwnership(String source, String target, double multiplier) {
+        if (source.equals(target)) {
+            return multiplier;
+        }
+
+        double ownership = 0.0;
+
+        for (DefaultWeightedEdge edge : graph.outgoingEdgesOf(source)) {
+            String connectedVertex = graph.getEdgeTarget(edge);
+            if (connectedVertex.equals(source)) {
+                connectedVertex = graph.getEdgeSource(edge);
+            }
+
+            double edgeWeight = graph.getEdgeWeight(edge);
+            ownership += calculateTotalOwnership(connectedVertex, target, multiplier * edgeWeight / 100);
+        }
+
+        return ownership;
     }
 }
