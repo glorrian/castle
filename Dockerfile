@@ -1,11 +1,14 @@
-FROM ghcr.io/graalvm/native-image:ol8-23.0.1
+FROM container-registry.oracle.com/graalvm/native-image:21-ol8 AS builder
 
-WORKDIR /app
+RUN microdnf install findutils
 
-COPY . .
+WORKDIR /build
+
+COPY . /build
 
 RUN ./gradlew nativeBuild
 
-FROM alpine:latest
-COPY --from=0 /app/build/native/nativeCompile/castle-application /app/castle-application
-ENTRYPOINT ["/app/my-app"]
+FROM container-registry.oracle.com/os/oraclelinux:8-slim
+
+COPY --from=builder build/build/native/nativeCompile castle-application
+ENTRYPOINT ["/castle-application"]
