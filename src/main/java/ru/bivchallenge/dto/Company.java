@@ -12,7 +12,6 @@ import java.util.Objects;
  * @param fullName the full name of the company
  */
 public record Company(long id, String ogrn, String inn, String fullName) implements Entity, RecordSeparable {
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

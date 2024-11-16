@@ -2,6 +2,7 @@ package ru.bivchallenge;
 
 import dagger.Component;
 import ru.bivchallenge.executor.ProcessDataExecutor;
+import ru.bivchallenge.module.BindingModule;
 import ru.bivchallenge.module.LocalDataModule;
 
 import javax.inject.Singleton;
@@ -20,7 +21,7 @@ import javax.inject.Singleton;
  * @see LocalDataModule
  */
 @Singleton
-@Component(modules = LocalDataModule.class)
+@Component(modules = {LocalDataModule.class, BindingModule.class})
 public interface CastleComponent {
     ProcessDataExecutor createProcessDataExecutor();
 }

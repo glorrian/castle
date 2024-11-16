@@ -80,9 +80,8 @@ public class CompanyGraph {
         for (Map.Entry<Long, NaturalEntity> entry : naturalEntityMap.entrySet()) {
             String naturalEntityVertex = "N:" + entry.getKey();
             double totalOwnership = calculateTotalOwnership(naturalEntityVertex, "H:" + headCompany.id(), 1.0, new HashSet<>());
-            System.out.println(totalOwnership);
             if (totalOwnership > 0.25) {
-                beneficiaries.addBenefeciar(new Benefeciar(entry.getValue(), totalOwnership));
+                beneficiaries.getBeneficiaries().add(new Benefeciar(entry.getValue(), totalOwnership));
             }
         }
 
@@ -95,7 +94,7 @@ public class CompanyGraph {
         }
 
         if (visited.contains(source)) {
-            return 0.0; // Avoid cycles
+            return 0.0;
         }
 
         visited.add(source);
