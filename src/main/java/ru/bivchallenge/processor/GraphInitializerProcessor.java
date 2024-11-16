@@ -1,6 +1,7 @@
 package ru.bivchallenge.processor;
 import ru.bivchallenge.dto.Company;
 import ru.bivchallenge.dto.CompanyGraph;
+import ru.bivchallenge.dto.LegalEntity;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,11 +19,17 @@ import java.util.Map;
  * @see CompanyGraph
  */
 public class GraphInitializerProcessor implements MapProcessor<Company, CompanyGraph>{
+    private final Map<Long, LegalEntity> legalEntityRegistry;
+
+    public GraphInitializerProcessor(Map<Long, LegalEntity> legalEntityRegistry) {
+        this.legalEntityRegistry = legalEntityRegistry;
+    }
+
     @Override
     public Map<Long, CompanyGraph> apply(Map<Long, Company> companyMap) {
         Map<Long, CompanyGraph> companyGraphMap = new HashMap<>(companyMap.size(), 1.0f);
         for (Map.Entry<Long, Company> entry : companyMap.entrySet()) {
-            CompanyGraph companyGraph = new CompanyGraph(entry.getValue());
+            CompanyGraph companyGraph = new CompanyGraph(entry.getValue(), legalEntityRegistry);
             companyGraphMap.put(entry.getKey(), companyGraph);
         }
         return companyGraphMap;
