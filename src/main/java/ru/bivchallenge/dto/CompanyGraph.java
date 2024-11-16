@@ -64,7 +64,7 @@ public class CompanyGraph {
 
     public void addLegalEntity(LegalEntity legalEntity) {
         if (legalEntityMap.containsKey(legalEntity.id())) {
-            graph.addVertex("N:" + legalEntity.id());
+            graph.addVertex("L:" + legalEntity.id());
             legalEntityMap.put(legalEntity.id(), legalEntity);
         }
 
