@@ -9,6 +9,17 @@ import ru.bivchallenge.dto.LegalEntity;
 import java.nio.file.Path;
 import java.util.Map;
 
+/**
+ * The {@code LegalEntityLocalProvider} class is responsible for loading {@link LegalEntity} data
+ * from a local CSV file. It extends {@link AbstractLocalDataProvider} to utilize common CSV reading functionality.
+ * <p>
+ * This class reads legal entity information from a file specified in the {@link CastleConfig} and
+ * parses it into a map where the keys are legal entity IDs and the values are {@link LegalEntity} objects.
+ *
+ * @see AbstractLocalDataProvider
+ * @see CsvReader
+ * @see LegalEntity
+ */
 public class LegalEntityLocalProvider extends AbstractLocalDataProvider<LegalEntity> {
     private final Path legalEntityTablePath;
 

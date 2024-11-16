@@ -7,6 +7,22 @@ import org.jgrapht.graph.Multigraph;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * The {@code CompanyGraph} class represents a graph structure that models relationships between
+ * a company (head company) and associated entities such as {@link NaturalEntity} and {@link LegalEntity}.
+ * <p>
+ * It uses a {@link Multigraph} from the JGraphT library to manage the graph representation, where:
+ * <ul>
+ *     <li>Vertices are instances of {@link Entity} (e.g., {@link Company}, {@link NaturalEntity}, {@link LegalEntity}).</li>
+ *     <li>Edges are instances of {@link DefaultWeightedEdge} to represent connections between entities.</li>
+ * </ul>
+ *
+ * <p>The graph is initialized with the head company as its root vertex. Other entities, such as
+ * {@link NaturalEntity} and {@link LegalEntity}, can be added as vertices and connected to the head company.
+ *
+ * @see org.jgrapht.Graph
+ * @see org.jgrapht.graph.Multigraph
+ */
 public class CompanyGraph {
     private final Graph<String, DefaultWeightedEdge> graph;
     private final Company headCompany;
