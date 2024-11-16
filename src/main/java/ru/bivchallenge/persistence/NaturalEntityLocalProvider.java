@@ -44,18 +44,24 @@ public class NaturalEntityLocalProvider extends AbstractLocalDataProvider<Natura
         if (csvRecord.getFieldCount() < 6) {
             return null;
         }
-        NaturalEntity naturalEntity = new NaturalEntity(
-                Long.parseLong(csvRecord.getField(0)),
-                Long.parseLong(csvRecord.getField(1)),
-                csvRecord.getField(2),
-                csvRecord.getField(3),
-                csvRecord.getField(4),
-                csvRecord.getField(5)
-        );
-        if (csvRecord.getFieldCount() == 8) {
-            naturalEntity.setShare(Double.parseDouble(csvRecord.getField(6).isEmpty() ? "0" : csvRecord.getField(6)));
-            naturalEntity.setSharePercent(Double.parseDouble(csvRecord.getField(7).isEmpty() ? "0" : csvRecord.getField(7)));
+        try {
+            NaturalEntity naturalEntity = new NaturalEntity(
+                    Long.parseLong(csvRecord.getField(0)),
+                    Long.parseLong(csvRecord.getField(1)),
+                    csvRecord.getField(2),
+                    csvRecord.getField(3),
+                    csvRecord.getField(4),
+                    csvRecord.getField(5)
+            );
+            if (csvRecord.getFieldCount() >= 7) {
+                naturalEntity.setShare(Double.parseDouble(csvRecord.getField(6).isEmpty() ? "0" : csvRecord.getField(6)));
+            }
+            if (csvRecord.getFieldCount() == 8) {
+                naturalEntity.setSharePercent(Double.parseDouble(csvRecord.getField(7).isEmpty() ? "0" : csvRecord.getField(7)));
+            }
+            return naturalEntity;
+        } catch (NumberFormatException e) {
+            return null;
         }
-        return naturalEntity;
     }
 }
