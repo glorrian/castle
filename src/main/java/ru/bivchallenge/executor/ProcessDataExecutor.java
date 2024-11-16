@@ -44,8 +44,6 @@ public class ProcessDataExecutor implements Executor {
 
     private final DataDispatcher<BenefeciarSet> benefeciarSetDataDispatcher;
 
-    private final GraphInitializerProcessor graphInitializerProcessor;
-
     @Inject
     public ProcessDataExecutor(
             DataProvider<LegalEntity> legalEntityDataProvider,
@@ -57,7 +55,6 @@ public class ProcessDataExecutor implements Executor {
         this.naturalEntityDataProvider = naturalEntityDataProvider;
         this.companyDataProvider = companyDataProvider;
         this.benefeciarSetDataDispatcher = benefeciarSetDataDispatcher;
-        this.graphInitializerProcessor = new GraphInitializerProcessor();
     }
 
     @Override
@@ -68,8 +65,9 @@ public class ProcessDataExecutor implements Executor {
             Future<Map<Long, NaturalEntity>> naturalEntityDataFuture = executorService.submit(naturalEntityDataProvider::get);
 
             Map<Long, Company> companyMap = companyDataFuture.get();
-            Map<Long, CompanyGraph> companyGraphMap = graphInitializerProcessor.apply(companyMap);
             Map<Long, LegalEntity> legalEntityMap = legalEntityDataFuture.get();
+            GraphInitializerProcessor graphInitializerProcessor = new GraphInitializerProcessor(legalEntityMap);
+            Map<Long, CompanyGraph> companyGraphMap = graphInitializerProcessor.apply(companyMap);
             legalEntityMap.forEach((key, legalEntity) -> {
                 CompanyGraph companyGraph = companyGraphMap.get(legalEntity.getCompanyId());
                 if (companyGraph != null) {

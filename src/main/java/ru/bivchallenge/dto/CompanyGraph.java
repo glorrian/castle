@@ -28,9 +28,11 @@ public class CompanyGraph {
     private final Company headCompany;
     private final Map<Long, NaturalEntity> naturalEntityMap;
     private final Map<Long, LegalEntity> legalEntityMap;
+    private final Map<Long, LegalEntity> legalEntityRegistry;
 
-    public CompanyGraph(Company headCompany) {
+    public CompanyGraph(Company headCompany, Map<Long, LegalEntity> legalEntityRegistry) {
         this.headCompany = headCompany;
+        this.legalEntityRegistry = legalEntityRegistry;
 
         naturalEntityMap = new HashMap<>();
         legalEntityMap = new HashMap<>();
@@ -47,34 +49,42 @@ public class CompanyGraph {
     }
 
     public void addNaturalEntity(NaturalEntity naturalEntity) {
-        if (naturalEntityMap.containsKey(naturalEntity.id())) {
+        if (!naturalEntityMap.containsKey(naturalEntity.id())) {
             graph.addVertex("N:" + naturalEntity.id());
             naturalEntityMap.put(naturalEntity.id(), naturalEntity);
         }
 
-        if (!graph.containsEdge(
-                "N:" + naturalEntity.id(),
-                "L:" + naturalEntity.getCompanyId())
-        ) {
-            graph.addEdge("N:" + naturalEntity.id(),
-                    "L:" + naturalEntity.getCompanyId(),
-                    new DefaultWeightedEdge());
+        if (!graph.containsEdge("N:" + naturalEntity.id(), "L:" + naturalEntity.getCompanyId())) {
+            if (naturalEntity.getCompanyId() == headCompany.id()) {
+                graph.addEdge("N:" + naturalEntity.id(), "H:" + headCompany.id(), new DefaultWeightedEdge());
+                return;
+            }
+            graph.addEdge("N:" + naturalEntity.id(), "L:" + naturalEntity.getCompanyId(), new DefaultWeightedEdge());
+
+            if (!graph.containsVertex("L:" + naturalEntity.getCompanyId()) && legalEntityRegistry.containsKey(naturalEntity.getCompanyId())) {
+                graph.addVertex("L:" + naturalEntity.getCompanyId());
+                addLegalEntity(legalEntityRegistry.get(naturalEntity.getCompanyId()));
+            }
+            graph.addEdge("N:" + naturalEntity.id(), "L:" + naturalEntity.getCompanyId(), new DefaultWeightedEdge());
         }
     }
 
     public void addLegalEntity(LegalEntity legalEntity) {
-        if (legalEntityMap.containsKey(legalEntity.id())) {
+        if (!legalEntityMap.containsKey(legalEntity.id())) {
             graph.addVertex("L:" + legalEntity.id());
             legalEntityMap.put(legalEntity.id(), legalEntity);
         }
 
-        if (!graph.containsEdge(
-                "L:" + legalEntity.id(),
-                "L:" + legalEntity.getCompanyId())
-        ) {
-            graph.addEdge("L:" + legalEntity.id(),
-                    "L:" + legalEntity.getCompanyId(),
-                    new DefaultWeightedEdge());
+        if (!graph.containsEdge("L:" + legalEntity.id(), "L:" + legalEntity.getCompanyId())) {
+            if (legalEntity.getCompanyId() == headCompany.id()) {
+                graph.addEdge("L:" + legalEntity.id(), "H:" + headCompany.id(), new DefaultWeightedEdge());
+                return;
+            }
+            if (!graph.containsVertex("L:" + legalEntity.getCompanyId()) && legalEntityRegistry.containsKey(legalEntity.getCompanyId())) {
+                graph.addVertex("L:" + legalEntity.getCompanyId());
+                addLegalEntity(legalEntityRegistry.get(legalEntity.getCompanyId()));
+            }
+            graph.addEdge("L:" + legalEntity.id(), "L:" + legalEntity.getCompanyId(), new DefaultWeightedEdge());
         }
     }
 
