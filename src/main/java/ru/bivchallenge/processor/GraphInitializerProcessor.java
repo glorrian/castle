@@ -10,7 +10,7 @@ public class GraphInitializerProcessor implements MapProcessor<Company, CompanyG
     @Override
     public Map<Long, CompanyGraph> apply(Map<Long, Company> companyMap) {
         return companyMap.entrySet().stream().map(entry -> {
-            CompanyGraph companyGraph = new CompanyGraph(entry.getValue(), null);
+            CompanyGraph companyGraph = new CompanyGraph(entry.getValue());
             return Map.entry(entry.getKey(), companyGraph);
         }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
