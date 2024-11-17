@@ -1,14 +1,7 @@
-FROM container-registry.oracle.com/graalvm/native-image:21-ol8 AS builder
+FROM openjdk:21-jdk-slim
 
-RUN microdnf install findutils
+WORKDIR /app
 
-WORKDIR /build
+COPY build/libs/castle-0.1-all.jar castle.jar
 
-COPY . /build
-
-RUN ./gradlew nativeBuild
-
-FROM container-registry.oracle.com/os/oraclelinux:8-slim
-
-COPY --from=builder build/build/native/nativeCompile castle-application
-ENTRYPOINT ["/castle-application"]
+CMD ["java", "-jar", "castle.jar"]
