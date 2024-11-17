@@ -1,0 +1,8 @@
+ru.bivchallenge
+ru.bivchallenge.config
+ru.bivchallenge.data
+ru.bivchallenge.dto
+ru.bivchallenge.executor
+ru.bivchallenge.module
+ru.bivchallenge.persistence
+ru.bivchallenge.processor
