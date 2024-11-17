@@ -16,4 +16,10 @@ package ru.bivchallenge.dto;
  * @see Owner
  */
 public interface OwnerEntity extends Entity, Owner {
+    /**
+     * Returns the ID of the company associated with this owner.
+     *
+     * @return the ID of the associated company
+     */
+    long getCompanyId();
 }

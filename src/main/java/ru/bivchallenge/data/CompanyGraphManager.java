@@ -1,7 +1,9 @@
 package ru.bivchallenge.data;
 
 import org.jgrapht.Graph;
-import org.jgrapht.graph.Multigraph;
+import org.jgrapht.GraphPath;
+import org.jgrapht.alg.shortestpath.AllDirectedPaths;
+import org.jgrapht.graph.DirectedMultigraph;
 import ru.bivchallenge.dto.*;
 
 import java.util.*;
@@ -29,7 +31,7 @@ public class CompanyGraphManager {
 
         this.naturalEntityMap = new HashMap<>();
         this.legalEntityMap = new HashMap<>();
-        this.graph = new Multigraph<>(WeightedEdge.class);
+        this.graph = new DirectedMultigraph<>(WeightedEdge.class);
 
         graph.addVertex(vertexId("H", headCompany.id()));
     }
@@ -50,6 +52,22 @@ public class CompanyGraphManager {
      */
     public Company getHeadCompany() {
         return headCompany;
+    }
+
+    public String getCompanyVertex(long companyId) {
+        return companyId == headCompany.id() ? vertexId("H", headCompany.id()) : vertexId("L", companyId);
+    }
+
+    public String getNaturalVertex(long naturalId) {
+        return vertexId("N", naturalId);
+    }
+
+    public LegalEntity getLegalEntity(long companyId) {
+        return legalEntityRegistry.get(companyId);
+    }
+
+    public NaturalEntity getNaturalEntity(long naturalId) {
+        return naturalEntityMap.get(naturalId);
     }
 
     /**
@@ -117,37 +135,13 @@ public class CompanyGraphManager {
     }
 
     private double defineOwnershipPercentageForNaturalEntity(String naturalVertex) {
+        AllDirectedPaths<String, WeightedEdge> allPaths = new AllDirectedPaths<>(graph);
+        List<GraphPath<String, WeightedEdge>> paths = allPaths.getAllPaths(naturalVertex, vertexId("H", headCompany.id()), true, null);
         double totalOwnership = 0.0;
-        for (WeightedEdge edge : graph.outgoingEdgesOf(naturalVertex)) {
-            String connectedVertex = getConnectedVertex(naturalVertex, edge);
-            double ownershipPercentage = edge.getWeight();
-            totalOwnership += calculateOwnershipThroughLinks(connectedVertex, ownershipPercentage, new HashSet<>());
+        for (GraphPath<String, WeightedEdge> path : paths) {
+            totalOwnership += path.getEdgeList().stream().mapToDouble(WeightedEdge::getWeight).reduce(1, (a, b) -> a * b);
         }
         return totalOwnership;
-    }
-
-    private double calculateOwnershipThroughLinks(String currentVertex, double currentOwnership, Set<String> visited) {
-        if (!visited.add(currentVertex)) {
-            return 0.0;
-        }
-
-        if (currentVertex.equals(vertexId("H", headCompany.id()))) {
-            return currentOwnership;
-        }
-
-        double totalOwnership = 0.0;
-
-        for (WeightedEdge edge : graph.outgoingEdgesOf(currentVertex)) {
-            String connectedVertex = getConnectedVertex(currentVertex, edge);
-            double ownershipPercentage = edge.getWeight();
-            totalOwnership += currentOwnership * ownershipPercentage * calculateOwnershipThroughLinks(connectedVertex, 1.0, visited);
-        }
-
-        return totalOwnership;
-    }
-
-    private String getCompanyVertex(long companyId) {
-        return companyId == headCompany.id() ? vertexId("H", headCompany.id()) : vertexId("L", companyId);
     }
 
     private void addLegalEntityIfRegistered(long companyId) {
@@ -159,9 +153,5 @@ public class CompanyGraphManager {
 
     private String vertexId(String prefix, long id) {
         return prefix + ":" + id;
-    }
-
-    private String getConnectedVertex(String source, WeightedEdge edge) {
-        return graph.getEdgeTarget(edge).equals(source) ? graph.getEdgeSource(edge) : graph.getEdgeTarget(edge);
     }
 }

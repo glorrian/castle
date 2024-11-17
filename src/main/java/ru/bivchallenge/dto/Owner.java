@@ -8,11 +8,7 @@ package ru.bivchallenge.dto;
  * for example, as a legal entity, natural entity, or other ownership type.</p>
  */
 public interface Owner {
+    double getShare();
 
-    /**
-     * Returns the ID of the company associated with this owner.
-     *
-     * @return the ID of the associated company
-     */
-    long getCompanyId();
+    double getSharePercent();
 }
