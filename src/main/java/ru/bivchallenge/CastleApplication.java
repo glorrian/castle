@@ -14,9 +14,6 @@ public class CastleApplication {
                 .build();
 
         ProcessDataExecutor processDataExecutor = castleComponent.createProcessDataExecutor();
-        var start = System.currentTimeMillis();
         processDataExecutor.execute();
-        var end = System.currentTimeMillis();
-        System.out.println("Executon time: " + (end - start) + " ms");
     }
 }
