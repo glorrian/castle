@@ -273,6 +273,38 @@ N:102  N:103         L:203  N:102
         beneficiaries.toArray()[1].naturalEntity == f3_100
         beneficiaries.toArray()[1].percent == 0.4368
     }
+    def "Calculation of beneficiaries with values less than zero"() {
+        given:
+        def l1 = new LegalEntity(2L, 1L, "L1", "111", "Legal Entity 1")
+        def l2 = new LegalEntity(3L, 1L, "L2", "112", "Legal Entity 2")
 
+        def f1_10 = new NaturalEntity(1L, 2L, "F1", "121", "F1", "")
+        def f2_90 = new NaturalEntity(2L, 2L, "F2", "122", "F2", "")
+        def f2_100 = new NaturalEntity(2L, 2L, "F2", "122", "F2", "")
+        and:
+        l1.sharePercent = 0.5
+        l2.sharePercent = 0.5
+        f1_10.sharePercent = -0.1
+        f2_90.sharePercent = 0.9
+        f2_100.sharePercent = -1.0
+
+        def legalEntityRegistry = [2L: l1, 3L: l2]
+
+        when:
+        def manager = new CompanyGraphManager(headCompany, legalEntityRegistry)
+        manager.addEntity(l1)
+        manager.addEntity(l2)
+        manager.addEntity(f1_10)
+        manager.addEntity(f2_90)
+        manager.addEntity(f2_100)
+
+        and:
+        def beneficiaries = manager.getBeneficiaries().getBeneficiaries()
+
+        then:
+        beneficiaries.size() == 1
+        beneficiaries.toArray()[0].naturalEntity == f2_90
+        beneficiaries.toArray()[0].percent == 0.45
+    }
 
 }
