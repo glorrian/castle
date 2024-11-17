@@ -16,6 +16,6 @@ WORKDIR /app
 
 COPY --from=builder /app/build/libs/castle-0.1-all.jar castle.jar
 
-COPY .local .local
+RUN if [ -d ".local" ]; then cp -r .local .local; fi
 
 CMD ["java", "-jar", "castle.jar"]
