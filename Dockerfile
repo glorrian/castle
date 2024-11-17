@@ -1,4 +1,3 @@
-# Этап 1: Сборка JAR файла
 FROM openjdk:21-jdk-slim AS builder
 
 WORKDIR /app
@@ -9,7 +8,6 @@ RUN chmod +x gradlew
 
 RUN ./gradlew shadowJar
 
-# Этап 2: Финальный образ
 FROM openjdk:21-jdk-slim
 
 WORKDIR /app
