@@ -43,7 +43,6 @@ graalvmNative {
             buildArgs.addAll(
                     "--no-fallback",
                     "--initialize-at-build-time=ru.bivchallenge",
-                    "--trace-class-initialization",
                     "--report-unsupported-elements-at-runtime",
                     "--verbose"
             )
