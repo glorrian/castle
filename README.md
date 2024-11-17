@@ -6,7 +6,6 @@ Welcome to the Castle project! This project is part of the Biv Hack Challenge an
 
 - **Company Graph Management**: Efficiently manage and visualize complex company ownership structures.
 - **Beneficiary Calculation**: Accurately calculate the beneficiaries and their respective ownership percentages.
-- **Spring Boot**: Built with Spring Boot for robust and scalable application development.
 - **Gradle**: Utilizes Gradle for build automation and dependency management.
 
 ## Getting Started
