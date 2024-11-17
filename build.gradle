@@ -3,6 +3,7 @@ plugins {
     id("groovy")
     id("application")
     id("org.graalvm.buildtools.native") version "0.10.3"
+    id 'com.github.johnrengelman.shadow' version '8.1.1'\
 }
 
 version = "0.1"
@@ -39,7 +40,13 @@ graalvmNative {
     binaries {
         main {
             imageName.set('castle-application')
-            buildArgs.add('--verbose')
+            buildArgs.addAll(
+                    "--no-fallback",
+                    "--initialize-at-build-time=ru.bivchallenge",
+                    "--trace-class-initialization",
+                    "--report-unsupported-elements-at-runtime",
+                    "--verbose"
+            )
         }
     }
 }
