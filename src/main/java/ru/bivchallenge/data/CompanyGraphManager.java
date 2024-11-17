@@ -3,7 +3,9 @@ package ru.bivchallenge.data;
 import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.AllDirectedPaths;
+import org.jgrapht.graph.DefaultDirectedWeightedGraph;
 import org.jgrapht.graph.DirectedMultigraph;
+import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import ru.bivchallenge.dto.*;
 
 import java.util.*;
@@ -31,7 +33,7 @@ public class CompanyGraphManager {
 
         this.naturalEntityMap = new HashMap<>();
         this.legalEntityMap = new HashMap<>();
-        this.graph = new DirectedMultigraph<>(WeightedEdge.class);
+        this.graph = new SimpleDirectedWeightedGraph<>(WeightedEdge.class);
 
         graph.addVertex(vertexId("H", headCompany.id()));
     }
@@ -135,14 +137,32 @@ public class CompanyGraphManager {
     }
 
     private double defineOwnershipPercentageForNaturalEntity(String naturalVertex) {
-        AllDirectedPaths<String, WeightedEdge> allPaths = new AllDirectedPaths<>(graph);
-        List<GraphPath<String, WeightedEdge>> paths = allPaths.getAllPaths(naturalVertex, vertexId("H", headCompany.id()), true, null);
-        double totalOwnership = 0.0;
-        for (GraphPath<String, WeightedEdge> path : paths) {
-            totalOwnership += path.getEdgeList().stream().mapToDouble(WeightedEdge::getWeight).reduce(1, (a, b) -> a * b);
+        // Start DFS from the natural entity vertex
+        return calculateOwnership(naturalVertex, vertexId("H", headCompany.id()), 1.0, new HashSet<>());
+    }
+
+    private double calculateOwnership(String currentVertex, String targetVertex, double currentOwnership, Set<String> visited) {
+        if (currentVertex.equals(targetVertex)) {
+            return currentOwnership;
         }
+
+        if (!visited.add(currentVertex)) {
+            return 0.0;
+        }
+
+        double totalOwnership = 0.0;
+
+        for (WeightedEdge edge : graph.outgoingEdgesOf(currentVertex)) {
+            String nextVertex = graph.getEdgeTarget(edge);
+
+            totalOwnership += calculateOwnership(nextVertex, targetVertex, currentOwnership * edge.getWeight(), visited);
+        }
+
+        visited.remove(currentVertex);
+
         return totalOwnership;
     }
+
 
     private void addLegalEntityIfRegistered(long companyId) {
         LegalEntity legalEntity = legalEntityRegistry.get(companyId);

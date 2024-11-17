@@ -4,10 +4,14 @@ import org.jgrapht.Graph;
 import ru.bivchallenge.data.CompanyGraphManager;
 import ru.bivchallenge.dto.*;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
+/**
+ * The {@code GraphRepairProcessor} class is responsible for repairing a graph by ensuring that
+ * all weights on incoming edges are correctly calculated or validated.
+ *
+ * <p>This optimized version includes caching, reduced string operations, and iterative graph traversal.</p>
+ */
 public class GraphRepairProcessor implements UnaryProcessor<CompanyGraphManager> {
 
     @Override
@@ -19,59 +23,66 @@ public class GraphRepairProcessor implements UnaryProcessor<CompanyGraphManager>
         return companyGraphManager;
     }
 
-    private void repairVertex(CompanyGraphManager companyGraphManager, String vertex) {
+    private void repairVertex(CompanyGraphManager companyGraphManager, String startVertex) {
         Graph<String, WeightedEdge> graph = companyGraphManager.getGraph();
-        Set<WeightedEdge> incomingEdges = graph.incomingEdgesOf(vertex);
+        Set<String> visited = new HashSet<>();
+        Deque<String> stack = new ArrayDeque<>();
+        stack.push(startVertex);
 
-        // If there are no incoming edges, there is nothing to repair
-        if (incomingEdges.isEmpty()) return;
+        while (!stack.isEmpty()) {
+            String vertex = stack.pop();
+            if (!visited.add(vertex)) continue;
 
-        // If only one incoming edge exists, assign a weight of 1 if it's missing
-        if (incomingEdges.size() == 1) {
-            WeightedEdge edge = incomingEdges.iterator().next();
-            if (edge.getWeight() == 0) {
-                graph.setEdgeWeight(edge, 1.0);
+            Set<WeightedEdge> incomingEdges = graph.incomingEdgesOf(vertex);
+            if (incomingEdges.isEmpty()) continue;
+
+            if (incomingEdges.size() == 1) {
+                WeightedEdge edge = incomingEdges.iterator().next();
+                if (edge.getWeight() == 0) {
+                    edge.setWeight(1.0);
+                }
+            } else {
+                // Cache owner entities for this vertex
+                Map<String, OwnerEntity> ownerCache = new HashMap<>();
+                for (WeightedEdge edge : incomingEdges) {
+                    String sourceVertex = graph.getEdgeSource(edge);
+                    ownerCache.computeIfAbsent(sourceVertex, v -> getOwnerEntity(companyGraphManager, v));
+                }
+
+                restoreOrValidateWeights(companyGraphManager, vertex, incomingEdges, ownerCache);
             }
-            return;
-        }
 
-        // Handle cases with multiple incoming edges
-        restoreOrValidateWeights(companyGraphManager, vertex, incomingEdges);
-
-        // Recursively repair child vertices
-        for (WeightedEdge edge : incomingEdges) {
-            repairVertex(companyGraphManager, graph.getEdgeSource(edge));
+            // Add source vertices of incoming edges to the stack
+            for (WeightedEdge edge : incomingEdges) {
+                stack.push(graph.getEdgeSource(edge));
+            }
         }
     }
 
-    private void restoreOrValidateWeights(CompanyGraphManager companyGraphManager, String vertex, Set<WeightedEdge> edges) {
+    private void restoreOrValidateWeights(CompanyGraphManager companyGraphManager, String vertex,
+                                          Set<WeightedEdge> edges, Map<String, OwnerEntity> ownerCache) {
         Graph<String, WeightedEdge> graph = companyGraphManager.getGraph();
         Map<String, BrokenEntity> brokenEdges = new HashMap<>();
         double totalWeight = 0.0;
         double totalShare = 0.0;
         boolean hasMissingShares = false;
 
-        // Process each incoming edge
         for (WeightedEdge edge : edges) {
             String sourceVertex = graph.getEdgeSource(edge);
-            OwnerEntity ownerEntity = getOwnerEntity(companyGraphManager, sourceVertex);
+            OwnerEntity ownerEntity = ownerCache.get(sourceVertex);
 
-            // Track missing edges
             if (edge.getWeight() == 0) {
                 brokenEdges.put(sourceVertex, new BrokenEntity(ownerEntity, edge));
+                hasMissingShares |= (ownerEntity.getShare() == 0);
             } else {
                 totalWeight += edge.getWeight();
             }
 
-            // Sum the owner shares
-            if (ownerEntity.getShare() == 0) {
-                hasMissingShares = true;
-            } else {
+            if (ownerEntity.getShare() > 0) {
                 totalShare += ownerEntity.getShare();
             }
         }
 
-        // Repair edges based on known shares
         if (!brokenEdges.isEmpty()) {
             if (!hasMissingShares) {
                 repairUsingShares(graph, brokenEdges, totalShare);
@@ -90,14 +101,12 @@ public class GraphRepairProcessor implements UnaryProcessor<CompanyGraphManager>
     }
 
     private void repairSingleEdge(Graph<String, WeightedEdge> graph, Map<String, BrokenEntity> brokenEdges, double totalWeight) {
-        // Assign the remaining weight to the single broken edge
         BrokenEntity brokenEntity = brokenEdges.values().iterator().next();
         double newWeight = 1.0 - totalWeight;
         brokenEntity.weightedEdge.setWeight(newWeight);
     }
 
     private OwnerEntity getOwnerEntity(CompanyGraphManager companyGraphManager, String vertexId) {
-        // Determine the type of vertex and fetch the corresponding entity
         if (vertexId.startsWith("L:")) {
             return companyGraphManager.getLegalEntity(parseVertexId(vertexId));
         } else if (vertexId.startsWith("N:")) {
@@ -112,7 +121,8 @@ public class GraphRepairProcessor implements UnaryProcessor<CompanyGraphManager>
     }
 
     private long parseVertexId(String vertexId) {
-        return Long.parseLong(vertexId.split(":")[1]);
+        int colonIndex = vertexId.indexOf(':');
+        return Long.parseLong(vertexId.substring(colonIndex + 1));
     }
 
     // Helper class to store information about broken edges
