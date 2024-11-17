@@ -50,8 +50,6 @@ public class ProcessDataExecutor implements Executor {
     public void execute() throws ExecutionException, InterruptedException {
         ForkJoinPool customThreadPool = new ForkJoinPool(Runtime.getRuntime().availableProcessors());
         try {
-            // Step 1: Fetch data
-            long startFetchTime = System.currentTimeMillis();
             CompletableFuture<Map<Long, Company>> companyDataFuture = CompletableFuture.supplyAsync(companyDataProvider::get, customThreadPool);
             CompletableFuture<Map<Long, LegalEntity>> legalEntityDataFuture = CompletableFuture.supplyAsync(legalEntityDataProvider::get, customThreadPool);
             CompletableFuture<Map<Long, NaturalEntity>> naturalEntityDataFuture = CompletableFuture.supplyAsync(naturalEntityDataProvider::get, customThreadPool);
@@ -59,16 +57,10 @@ public class ProcessDataExecutor implements Executor {
             Map<Long, Company> companyMap = companyDataFuture.get();
             Map<Long, LegalEntity> legalEntityMap = legalEntityDataFuture.get();
             Map<Long, NaturalEntity> naturalEntityMap = naturalEntityDataFuture.get();
-            System.out.println("Step 1: Data fetched in " + (System.currentTimeMillis() - startFetchTime) + " ms");
 
-            // Step 2: Initialize graphs
-            long startGraphInitTime = System.currentTimeMillis();
             GraphInitializerProcessor graphInitializerProcessor = new GraphInitializerProcessor(legalEntityMap);
             Map<Long, CompanyGraphManager> companyGraphMap = graphInitializerProcessor.apply(companyMap);
-            System.out.println("Step 2: Graphs initialized in " + (System.currentTimeMillis() - startGraphInitTime) + " ms");
 
-            // Step 3: Add legal entities to the graphs
-            long startLegalEntityTime = System.currentTimeMillis();
             CompletableFuture<Void> processLegalEntities = CompletableFuture.runAsync(() -> legalEntityMap.values()
                     .parallelStream()
                     .forEach(legalEntity -> {
@@ -78,10 +70,7 @@ public class ProcessDataExecutor implements Executor {
                         }
                     }), customThreadPool);
             processLegalEntities.join();
-            System.out.println("Step 3: Legal entities processed in " + (System.currentTimeMillis() - startLegalEntityTime) + " ms");
 
-            // Step 4: Add natural entities to the graphs
-            long startNaturalEntityTime = System.currentTimeMillis();
             CompletableFuture<Void> processNaturalEntities = CompletableFuture.runAsync(() -> naturalEntityMap.values()
                     .parallelStream()
                     .forEach(naturalEntity -> {
@@ -91,10 +80,7 @@ public class ProcessDataExecutor implements Executor {
                         }
                     }), customThreadPool);
             processNaturalEntities.join();
-            System.out.println("Step 4: Natural entities processed in " + (System.currentTimeMillis() - startNaturalEntityTime) + " ms");
 
-            // Step 5: Repair graphs and extract beneficiaries
-            long startGraphRepairTime = System.currentTimeMillis();
             GraphRepairProcessor graphRepairProcessor = new GraphRepairProcessor();
             Set<BenefeciarRegistry> benefeciarRegistry = ConcurrentHashMap.newKeySet();
             companyGraphMap.values().parallelStream().forEach(manager -> {
@@ -104,12 +90,8 @@ public class ProcessDataExecutor implements Executor {
                     benefeciarRegistry.add(beneficiaries);
                 }
             });
-            System.out.println("Step 5: Graphs repaired and beneficiaries extracted in " + (System.currentTimeMillis() - startGraphRepairTime) + " ms");
 
-            // Step 6: Dispatch beneficiary data
-            long startDispatchTime = System.currentTimeMillis();
             benefeciarSetDataDispatcher.dispatch(benefeciarRegistry);
-            System.out.println("Step 6: Data dispatched in " + (System.currentTimeMillis() - startDispatchTime) + " ms");
 
         } finally {
             customThreadPool.shutdown();
