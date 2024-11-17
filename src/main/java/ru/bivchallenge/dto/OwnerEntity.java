@@ -5,12 +5,12 @@ package ru.bivchallenge.dto;
  * and is associated with a company. It extends the {@link Entity} and {@link Owner} interfaces,
  * combining their functionalities.
  *
- * <p>Classes implementing this interface must provide implementations for:
+ * Classes implementing this interface must provide implementations for:
  * <ul>
  *   <li>{@code id()} from {@link Entity} - to return the unique identifier of the entity.</li>
  *   <li>{@code getCompanyId()} from {@link Owner} - to return the associated company ID.</li>
  * </ul>
- * </p>
+ *
  *
  * @see Entity
  * @see Owner
