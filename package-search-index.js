@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"ru.bivchallenge"},{"l":"ru.bivchallenge.config"},{"l":"ru.bivchallenge.data"},{"l":"ru.bivchallenge.dto"},{"l":"ru.bivchallenge.executor"},{"l":"ru.bivchallenge.module"},{"l":"ru.bivchallenge.persistence"},{"l":"ru.bivchallenge.processor"}];updateSearchResults();
